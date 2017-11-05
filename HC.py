@@ -3,6 +3,10 @@
 Created on Mon Oct 30 15:53:35 2017
 
 @author: Armaan Khullar
+
+This program will perform Hierarchical Clustering on "graduation_rates_CLEANED.csv" and will 
+cluster the data with attributes ranging from "percent_associates_degree"
+to "State". In addition, it will also calculate the silhouette ratio.
 """
 
 
@@ -23,29 +27,26 @@ from pprint import pprint
 def HC():
     myData = pd.read_csv('graduation_rates_CLEANED.csv')
     
-    print("Before doing the relabeling:")
-    X = myData.iloc[:, [4,5,6,7, 8, 9, 10]].values
-    print(X)
-    
-    print("\nNow, we are doing the relabeling:")
+    #Converting the values of "State" and "City", which are strings, to numeric representations.
     lb = LabelEncoder()
     myData["State"] = lb.fit_transform(myData["State"])
     myData["City"] = lb.fit_transform(myData["City"])
 
-    
+    #Collecting attributes "percent_associates_degree" to "State".
     X = myData.iloc[:, [4,5,6,7, 8, 9, 10]].values
-    print(X)
     
     #min_max_scaler = preprocessing.MinMaxScaler()
     #x_scaled = min_max_scaler.fit_transform(X)
     #normalizedDataFrame = pd.DataFrame(x_scaled)
     #now using the dendogram to find the best number of clusters.
     
+    #Creating a dendogram, which will depict our nested clusters.
     dendrogram = sch.dendrogram(sch.linkage(X, method = 'ward'))
     plt.title('Dendogram')
     plt.xlabel('Graduation')
     plt.ylabel('Euclidean distances')
-    plt.show()
+    print("Here is the dendrogram:")
+    plt.show() #Display the dendogram.
     
     #It seems like there are 4 clusters according to the dendrogram.
     #we now fit the hierarchial clustering to the graduation dataset
@@ -62,12 +63,12 @@ def HC():
     print("\nWe are now using PCA:")
     pca2D = decomposition.PCA(2)
         
-    # Turn the NY Times data into two columns with PCA
+    # Turn the data into two columns with PCA
     plot_columns = pca2D.fit_transform(X)
         
     # Plot using a scatter plot and shade by cluster label
     plt.scatter(x=plot_columns[:,0], y=plot_columns[:,1], c=cluster_labels)
     plt.show() #Display the plot
     
-
-HC()   
+if __name__ == "__main__":
+    HC() #Run the hierarchical clustering algorithm.   
